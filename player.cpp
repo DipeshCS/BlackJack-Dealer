@@ -41,19 +41,19 @@ QString  Player::getName() const
     return  nick_name;
 }
 
-QDataStream & operator << (QDataStream & stream, Player &player1){
-    stream << player1.setFoldTrue();
-    stream << player1.setUnique_num();
-    stream << player1.getName();
+//QDataStream & operator << (QDataStream & stream, Player &player1){
+//    stream << player1.setFoldTrue();
+//    stream << player1.setUnique_num(num);
+//    stream << player1.getName();
 
-    vector<Player> joinedPlayers;
-    for(std::list<Player>::iterator it=table.playerListBegin();it!=table.playerListEnd();it++){
-        joinedPlayers.push_back((*it));
-    }
-    int joinedPlayersSize = joinedPlayers.size();
-    stream << joinedPlayersSize;
-    for(std::vector<Player>::iterator player=joinedPlayers.begin();player!=joinedPlayers.end();player++){
-        stream << player;
-    }
+//    vector<Player> joinedPlayers;
+//    for(std::list<Player>::iterator it=table.playerListBegin();it!=table.playerListEnd();it++){
+//        joinedPlayers.push_back((*it));
+//    }
+//    int joinedPlayersSize = joinedPlayers.size();
+//    stream << joinedPlayersSize;
+//    for(std::vector<Player>::iterator player=joinedPlayers.begin();player!=joinedPlayers.end();player++){
+//        stream << player;
+//    }
 
-}
+//}

@@ -76,8 +76,8 @@ QDataStream & operator << (QDataStream & stream, Table &table){
    /* for(std::vector<Player>::iterator player=joinedPlayers.begin();player!=joinedPlayers.end();player++){
         stream << player;
     }*/
-    for(Player player1: table.connectedPalyer){
-        stream<<player1;
+    for(std::list<Player>::iterator it=table.playerListBegin();it!=table.playerListEnd();it++){
+        stream<<(*it);
     }
 
 }
@@ -93,7 +93,7 @@ QDataStream & operator >>(QDataStream & stream, Table &table){
     stream >> tablePort;
     table.setPortNo(tablePort);
 
-    stream >> joinedNickSize;
+    stream >> joinedPlayerSize;
     Player playerObj;
     for(int i=0;i<joinedPlayerSize;i++){
         stream >> playerObj;

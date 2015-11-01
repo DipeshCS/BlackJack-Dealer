@@ -1,5 +1,6 @@
 #include "dealer.h"
 #include "card.h"
+#include <bsd/stdlib.h>
 
 Dealer::Dealer()
 {
