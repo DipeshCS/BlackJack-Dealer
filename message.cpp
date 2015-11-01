@@ -21,8 +21,8 @@ MessageType Message::getMessageType() const {
 std::vector<QString> Message::getDataStrings() const{
     return dataStrings;
 }
-std::vector<Peer> Message::getPeerVector() const{
-    return peerVector;
+std::vector<Player> Message::getPlayerVector() const{
+    return playerVector;
 }
 
 void Message::insertDataString(const QString &string){
@@ -30,9 +30,9 @@ void Message::insertDataString(const QString &string){
     dataStrings.push_back(string);
 }
 
-void Message::insertPeerObj(const Peer &peer){
+void Message::insertPlayerObj(const Player &player){
 
-    peerVector.push_back(peer);
+    playerVector.push_back(player);
 }
 
 std::vector<Table> Message::getTableVector() const{
@@ -61,9 +61,9 @@ QDataStream & operator <<(QDataStream & stream, const Message &message){
     std::vector<QString> dataStrings = message.getDataStrings();
     int dataStringsSize = dataStrings.size();
     stream << dataStringsSize;
-    std::vector<Peer> peerObjects = message.getPeerVector();
-    int peerVectorSize = peerObjects.size();
-    stream << peerVectorSize;
+    std::vector<Player> playerObjects = message.getPlayerVector();
+    int playerVectorSize = playerObjects.size();
+    stream << playerVectorSize;
     std::vector<Table> tableVector = message.getTableVector();
     int tableVectorSize = tableVector.size();
     stream << tableVectorSize;
@@ -72,10 +72,10 @@ QDataStream & operator <<(QDataStream & stream, const Message &message){
         stream << obj;
     }
 
-    for(Peer peer :  peerObjects){
-        stream<<peer;
+    /*for(Player player: playerObjects){
+        stream<<player;
 
-    }
+    }*/
     for(Table table: tableVector){
         stream << table;
     }
@@ -85,15 +85,15 @@ QDataStream & operator <<(QDataStream & stream, const Message &message){
 QDataStream &  operator >>(QDataStream & stream, Message &message){
     MessageType mtype;
     QString stringObj;
-    Peer peerObj;
+    Player playerObj;
     Table tableObj;
     int dataStringsSize;
-    int peerVectorSize;
+    int playerVectorSize;
     int tableVectorSize;
 
     stream >> mtype;
     stream >> dataStringsSize;
-    stream >> peerVectorSize;
+    stream >> playerVectorSize;
     stream >> tableVectorSize;
     message.setMessageType(mtype);
 
@@ -101,10 +101,10 @@ QDataStream &  operator >>(QDataStream & stream, Message &message){
         stream>>stringObj;
         message.insertDataString(stringObj);
     }
-    for(int i=0;i<peerVectorSize; i++){
-        stream>>peerObj;
-        message.insertPeerObj(peerObj);
-    }
+   /* for(int i=0;i<playerVectorSize; i++){
+        stream>>playerObj;
+        message.insertPlayerObj(playerObj);
+    }*/
     for(int i=0;i<tableVectorSize; i++){
         stream >> tableObj;
         message.insertTableObj(tableObj);

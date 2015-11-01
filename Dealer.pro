@@ -17,11 +17,19 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     peer.cpp \
     message.cpp \
-    table.cpp
+    table.cpp \
+    card.cpp \
+    dealer.cpp \
+    player.cpp \
+    decider.cpp
 
 HEADERS  += mainwindow.h \
     peer.h \
     message.h \
-    table.h
+    table.h \
+    card.h \
+    dealer.h \
+    player.h \
+    decider.h
 
 FORMS    += mainwindow.ui

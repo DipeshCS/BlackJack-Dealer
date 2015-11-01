@@ -2,7 +2,7 @@
 #define MESSAGE_H
 #include <vector>
 #include <QDataStream>
-#include <peer.h>
+#include <player.h>
 #include "table.h"
 
 
@@ -31,8 +31,8 @@ public:
     Message(MessageType type);
     std::vector<QString> getDataStrings() const;
     void insertDataString(const QString &string);
-    std::vector<Peer> getPeerVector() const;
-    void insertPeerObj(const Peer &peer);
+    std::vector<Player> getPlayerVector() const;
+    void insertPlayerObj(const Player &player);
     std::vector<Table> getTableVector() const;
     void insertTableObj(const Table &table);
 
@@ -40,7 +40,7 @@ public:
 private:
     MessageType m_type;
     std::vector<QString> dataStrings;
-    std::vector<Peer> peerVector;
+    std::vector<Player> playerVector;
     std::vector<Table> tableVector;
 
 };

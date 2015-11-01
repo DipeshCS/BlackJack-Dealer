@@ -5,9 +5,12 @@
 #include <QByteArray>
 
 #include "peer.h"
+#include "card.h"
 #include <QNetworkInterface>
 #include <QMessageBox>
 #include "message.h"
+#include "decider.h"
+#include "table.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -78,11 +81,14 @@ int MainWindow::on_createBtn_clicked()
 
 
     int portNumber = MainWindow::portNum++;
-    Table table = Table( tableName, tableCap, portNumber );
+    Table table = Table();
+    table.setCapacity(tableCap.toInt());
+    table.setTableName(&tableName);
+    table.setPortNo(portNumber);
 
     qDebug() << table.getTableName();
-    qDebug() << table.getTableCap();
-    qDebug() << table.getPort();
+    qDebug() << table.getCapacity();
+    qDebug() << table.getPortNo();
 
    // table.addNickName("Vivek");
    // table.addNickName("Dipesh");
@@ -102,19 +108,19 @@ void MainWindow::onAvailableTablesListItemClicked(QListWidgetItem *listItem){
    ui->infoPanelTextBox->clear();
     Table table = MainWindow::tables.value(listItem->text());
     QString tableName = "Table name: "+table.getTableName()+"\n";
-    QString tablePort = "Listening port: "+QString::number(table.getPort())+"\n";
-    QString tableCap = "Table Capacity: "+table.getTableCap()+"\n";
+    QString tablePort = "Listening port: "+QString::number(table.getPortNo())+"\n";
+    QString tableCap = "Table Capacity: "+(QString)table.getCapacity()+"\n";
    // qDebug() << tableName;
-    QString tableConnectedNicks = "Connected Nicks: \n";
+    QString tableConnectedPlayers = "Connected Players: \n";
 
-    for (Peer peer: table.getJoinedNickNames()) {
-       tableConnectedNicks.append(peer.getNickName()+"\n");
+    for (std::list<Player>::iterator it=table.playerListBegin();it!=table.playerListEnd();it++) {
+       tableConnectedPlayers.append((*it).getName()+"\n");
     }
 
     ui->infoPanelTextBox->insertPlainText(tableName+"\n");
     ui->infoPanelTextBox->insertPlainText(tablePort+"\n");
     ui->infoPanelTextBox->insertPlainText(tableCap+"\n");
-    ui->infoPanelTextBox->insertPlainText(tableConnectedNicks+"\n");
+    ui->infoPanelTextBox->insertPlainText(tableConnectedPlayers+"\n");
 
 
 }
@@ -212,25 +218,15 @@ void MainWindow::readyRead(){
     if (blockSize == 0) {
         if (socket->bytesAvailable() < (int)sizeof(quint16))
             return;
-//! [8]
 
-//! [10]
         in >> blockSize;
     }
 
     if (socket->bytesAvailable() < blockSize)
         return;
-//! [10] //! [11]
 
-   // Sample sample;
-   // in >> sample;
-   // qDebug() << sample.message+"Message Recieved";
-   // qDebug()<<sample.sender+"From Sender ";
-   // Peer peer;
-    //in >> peer;
 
-    //qDebug() << peer.getNickName();
-    //qDebug() << peer.getpeerAddress();
+ 
     Message message ;
     in >> message;
     MessageType mtype = message.getMessageType();
@@ -257,7 +253,6 @@ void MainWindow::readyRead(){
         out.device()->seek(0);
 
         out << (quint16)(block.size() - sizeof(quint16));
-    //! [6] //! [7]
        qDebug()<<QString(block);
        socket->write(block);
        socket->flush();
@@ -270,26 +265,26 @@ void MainWindow::readyRead(){
          for(QString tableName: message.getDataStrings()){
              qDebug() << tableName +"table name received";
              Table table = MainWindow::tables[tableName];
-            for(Peer peer: message.getPeerVector()){
-             table.addNickName(peer);
+            for(Player player : message.getPlayerVector()){
+             table.addPlayerToTable(player);
             }
 
              tables[tableName] = table;
          }
 
     }
-    else if(mtype == MessageType::LeaveTable){
+   /* else if(mtype == MessageType::LeaveTable){
          qDebug() <<"LeaveTable";
          for(QString tableName: message.getDataStrings()){
              Table table = MainWindow::tables[tableName];
-            for(Peer peer: message.getPeerVector()){
-             table.removeNickName(peer);
+            for(Player player: message.getPlayerVector()){
+             table.removeNickName(player);
             }
 
              tables[tableName] = table;
          }
 
-    }
+    }*/
 
 
 
@@ -358,3 +353,5 @@ void MainWindow::disconnected(){
         socket->deleteLater();
 
 }
+
+
